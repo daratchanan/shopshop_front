@@ -163,7 +163,7 @@ const EnhancedTableToolbar = (props) => {
          {numSelected > 0 ? (
             <Tooltip title="Delete">
                <IconButton aria-label="delete">
-                  <DeleteIcon onClick={deleteItem}/>
+                  <DeleteIcon onClick={deleteItem} />
                </IconButton>
             </Tooltip>
          ) : (
@@ -221,17 +221,16 @@ export default function Cart() {
       return item.quantity * item.Product.price + accu;
    }, 0)
 
-   
 
-   const fetchCart =()=>{
-      axios.get("/cartItems") 
-      .then(async (res) => {
-         setCartItems(res.data.cartItem)
-      })
-      .catch(err => {
-         console.log(err);
-         alert("Something went wrong.")
-      });
+   const fetchCart = () => {
+      axios.get("/cartItems")
+         .then(async (res) => {
+            setCartItems(res.data.cartItem)
+         })
+         .catch(err => {
+            console.log(err);
+            alert("Something went wrong.")
+         });
    }
 
    useEffect(() => {
@@ -246,7 +245,7 @@ export default function Cart() {
 
    const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-         const newSelecteds = cartItems.map((n) => n.Product.name);
+         const newSelecteds = cartItems.map((n) => n.id);
          setSelected(newSelecteds);
          return;
       }
@@ -281,12 +280,12 @@ export default function Cart() {
       setRowsPerPage(parseInt(event.target.value, 10));
       setPage(0);
    };
-   const updateQuantity = (e)=>{
+   const updateQuantity = (e) => {
       // console.log (e.target.id)
       // console.log(e.target.value)
-      axios.put(`/cartItems/${e.target.id}`,{
-       quantity: Number(e.target.value)
-      }) 
+      axios.put(`/cartItems/${e.target.id}`, {
+         quantity: Number(e.target.value)
+      })
          .then(async (res) => {
             fetchCart()
          })
@@ -294,26 +293,17 @@ export default function Cart() {
             console.log(err);
             alert("Something went wrong.")
          });
-      //fetch
-      fetchCart()
+      fetchCart();
    }
 
-   const deleteItem = async ()=>{
+   const deleteItem = async () => {
       console.log('delete clicked')
       console.log(selected);
 
-      await Promise.all(selected.map(async id => await axios.delete(`/cartItems/${id}`))) ;
-        fetchCart() 
-      //      .then(async (res) => {
-      //         fetchCart()
-      //      })
-      //      .catch(err => {
-      //         console.log(err);
-      //         alert("Something went wrong.")
-      //      });
-      //   //fetch
-      //   fetchCart()
-   }
+      await Promise.all(selected.map(async (id) => 
+      await axios.delete(`/cartItems/${id}`)));
+      fetchCart();
+   };
 
    const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -321,150 +311,150 @@ export default function Cart() {
 
    return (
       <>
-      <NavBar />
-      <Container maxWidth="xl" className={classes.root}>
-         <Grid container spacing={3} >
-            <Grid item md={9} >
-               <Paper className={classes.paper} >
-                  <EnhancedTableToolbar deleteItem={deleteItem} numSelected={selected.length} />
-                  <TableContainer>
-                     <Table
-                        className={classes.table}
-                        aria-labelledby="tableTitle"
-                        size={dense ? 'small' : 'medium'}
-                        aria-label="enhanced table"
-                     >
-                        <EnhancedTableHead
-                           classes={classes}
-                           numSelected={selected.length}
-                           order={order}
-                           orderBy={orderBy}
-                           onSelectAllClick={handleSelectAllClick}
-                           onRequestSort={handleRequestSort}
-                           rowCount={cartItems.length}
-                        />
-                        <TableBody>
-                           {stableSort(cartItems, getComparator(order, orderBy))
-                              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                              .map((row, index) => {
-                                 const isItemSelected = isSelected(row.id);
-                                 const labelId = `enhanced-table-checkbox-${index}`;
+         <NavBar />
+         <Container maxWidth="xl" className={classes.root}>
+            <Grid container spacing={3} >
+               <Grid item md={9} >
+                  <Paper className={classes.paper} >
+                     <EnhancedTableToolbar deleteItem={deleteItem} numSelected={selected.length} />
+                     <TableContainer>
+                        <Table
+                           className={classes.table}
+                           aria-labelledby="tableTitle"
+                           size={dense ? 'small' : 'medium'}
+                           aria-label="enhanced table"
+                        >
+                           <EnhancedTableHead
+                              classes={classes}
+                              numSelected={selected.length}
+                              order={order}
+                              orderBy={orderBy}
+                              onSelectAllClick={handleSelectAllClick}
+                              onRequestSort={handleRequestSort}
+                              rowCount={cartItems.length}
+                           />
+                           <TableBody>
+                              {stableSort(cartItems, getComparator(order, orderBy))
+                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                 .map((row, index) => {
+                                    const isItemSelected = isSelected(row.id);
+                                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                                 return (
-                                    <TableRow
-                                       hover
-                                       // onClick={(event) => handleClick(event, row.name)}
-                                       role="checkbox"
-                                       aria-checked={isItemSelected}
-                                       tabIndex={-1}
-                                       key={row.Product.name}
-                                       selected={isItemSelected}
-                                    >
-                                       <TableCell padding="checkbox">
-                                          <Checkbox
-                                             checked={isItemSelected}
-                                             inputProps={{ 'aria-labelledby': labelId }}
-                                             onClick={(event) => handleClick(event, row.id)}
-                                          />
-                                       </TableCell>
-                                       <TableCell >
-                                          <img
-                                             src={row.Product.img}
-                                             width={"100px"}
-                                             height={"100px"}
-                                          />
-                                       </TableCell>
-                                       <TableCell align="left">{row.Product.name}</TableCell>
-                                       <TableCell align="left">{row.Product.price}</TableCell>
+                                    return (
+                                       <TableRow
+                                          hover
+                                          // onClick={(event) => handleClick(event, row.name)}
+                                          role="checkbox"
+                                          aria-checked={isItemSelected}
+                                          tabIndex={-1}
+                                          key={row.Product.name}
+                                          selected={isItemSelected}
+                                       >
+                                          <TableCell padding="checkbox">
+                                             <Checkbox
+                                                checked={isItemSelected}
+                                                inputProps={{ 'aria-labelledby': labelId }}
+                                                onClick={(event) => handleClick(event, row.id)}
+                                             />
+                                          </TableCell>
+                                          <TableCell >
+                                             <img
+                                                src={row.Product.img}
+                                                width={"100px"}
+                                                height={"100px"}
+                                             />
+                                          </TableCell>
+                                          <TableCell align="left">{row.Product.name}</TableCell>
+                                          <TableCell align="left">{row.Product.price}</TableCell>
 
-                                       <TableCell align="left">
-                                          <TextField
-                                             id={row.id}
-                                             //label="Number"
-                                             type="number"
-                                             InputLabelProps={{
-                                                shrink: true,
-                                             }}
-                                             variant="outlined"
-                                             defaultValue={row.quantity}
-                                             onChange={updateQuantity}
-                                          />
-                                       </TableCell>
-                                    </TableRow>
-                                 );
-                              })}
-                           {/* {emptyRows > 0 && (
+                                          <TableCell align="left">
+                                             <TextField
+                                                id={row.id}
+                                                //label="Number"
+                                                type="number"
+                                                InputLabelProps={{
+                                                   shrink: true,
+                                                }}
+                                                variant="outlined"
+                                                defaultValue={row.quantity}
+                                                onChange={updateQuantity}
+                                             />
+                                          </TableCell>
+                                       </TableRow>
+                                    );
+                                 })}
+                              {/* {emptyRows > 0 && (
                         <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                            <TableCell colSpan={6} />
                         </TableRow>
                      )} */}
-                        </TableBody>
-                     </Table>
-                  </TableContainer>
-                  <TablePagination
-                     rowsPerPageOptions={[5, 10, 25]}
-                     component="div"
-                     count={cartItems.length}
-                     rowsPerPage={rowsPerPage}
-                     page={page}
-                     onChangePage={handleChangePage}
-                     onChangeRowsPerPage={handleChangeRowsPerPage}
-                  />
-               </Paper>
-            </Grid>
-            <Grid item md={3}>
-               <Paper className={classes.paper}>
-                  <Typography variant="h5" gutterBottom style={{marginBottom:"20px"}}>
-                     Cart summary
+                           </TableBody>
+                        </Table>
+                     </TableContainer>
+                     <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={cartItems.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onChangePage={handleChangePage}
+                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                     />
+                  </Paper>
+               </Grid>
+               <Grid item md={3}>
+                  <Paper className={classes.paper}>
+                     <Typography variant="h5" gutterBottom style={{ marginBottom: "20px" }}>
+                        Cart summary
                   </Typography>
-                  <Grid container>
-                     <Grid item md={9}>
-                        <Typography variant="body1" gutterBottom>
-                           Temporary amount
+                     <Grid container>
+                        <Grid item md={9}>
+                           <Typography variant="body1" gutterBottom>
+                              Temporary amount
                         </Typography>
+                        </Grid>
+                        <Grid item md={3}>
+                           <Typography variant="body1" gutterBottom>
+                              {totalCartPrice}
+                           </Typography>
+                        </Grid>
                      </Grid>
-                     <Grid item md={3}>
-                        <Typography variant="body1" gutterBottom>
-                           {totalCartPrice}
+                     <Grid container>
+                        <Grid item md={9}>
+                           <Typography variant="body1" gutterBottom>
+                              Shipping
                         </Typography>
+                        </Grid>
+                        <Grid item md={3}>
+                           <Grid container justify="space-around" style={{ paddingBottom: "20px" }}>
+                              <Typography variant="body1" gutterBottom>
+                                 {shippingFee}
+                              </Typography>
+                           </Grid>
+                        </Grid>
                      </Grid>
-                  </Grid>
-                  <Grid container>
-                     <Grid item md={9}>
-                        <Typography variant="body1" gutterBottom>
-                           Shipping
-                        </Typography>
-                     </Grid>
-                     <Grid item md={3}>
-                     <Grid container justify="space-around" style={{paddingBottom:"20px"}}>
-                        <Typography variant="body1" gutterBottom>
-                           {shippingFee}
-                        </Typography>
-                     </Grid>
-                     </Grid>
-                  </Grid>
 
-                  <Divider />
-                  <Grid container style={{padding:"20px 0"}}>
-                     <Grid item md={9} >
-                        <Typography variant="h6" gutterBottom >
-                           The total amound of
+                     <Divider />
+                     <Grid container style={{ padding: "20px 0" }}>
+                        <Grid item md={9} >
+                           <Typography variant="h6" gutterBottom >
+                              The total amound of
                         </Typography>
+                        </Grid>
+                        <Grid item md={3}>
+                           <Typography variant="h6" gutterBottom>
+                              {totalCartPrice + shippingFee}
+                           </Typography>
+                        </Grid>
                      </Grid>
-                     <Grid item md={3}>
-                        <Typography variant="h6" gutterBottom>
-                           {totalCartPrice+shippingFee}
-                        </Typography>
-                     </Grid>
-                  </Grid>
-                  <Button variant="contained" color="primary" fullWidth>
-                     GO TO CHECKOUT
+                     <Button variant="contained" color="primary" fullWidth>
+                        GO TO CHECKOUT
                   </Button>
 
-               </Paper>
+                  </Paper>
+               </Grid>
             </Grid>
-         </Grid>
-      </Container>
+         </Container>
       </>
    );
 }
