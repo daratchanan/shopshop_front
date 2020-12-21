@@ -71,9 +71,9 @@ export default function Login() {
       setPassword(even.target.value);
    };
 
-   // const handleRegister = () => {
-   //    history.push("/register");
-   // };
+   const handleRegister = () => {
+      history.push("/register");
+   };
 
    const onFinish = (event) => {
       event.preventDefault();
@@ -151,7 +151,7 @@ export default function Login() {
               </Link>
                   </Grid>
                   <Grid item>
-                     <Link href="#" variant="body2">
+                     <Link href="#" variant="body2" onClick={handleRegister}>
                         {"Don't have an account? Register"}
                      </Link>
                   </Grid>

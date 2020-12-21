@@ -10,9 +10,12 @@ function App() {
    const [role, setRole] = useState(LocalStorageService.getRole());
    const [userId, setUserId] = useState();
 
+   const user = LocalStorageService.getUser();
+  
+
    return (
       <>
-         <UserContext.Provider value={{ role, setRole }}>
+         <UserContext.Provider value={{ role, setRole, user }}>
             <PrivateRoutes role={role} setRole={setRole} />
          </UserContext.Provider>
       </>

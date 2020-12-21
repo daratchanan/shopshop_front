@@ -110,7 +110,7 @@ export default function InputProduct() {
       formData.append('productType_id', productType);
       formData.append('image', selectedFiles.files[0]);
       
-      await axios.post("/products", formData)
+      axios.post("/products", formData) 
          .then(async (res) => {
             alert("Inputproduct successfully.")
          })

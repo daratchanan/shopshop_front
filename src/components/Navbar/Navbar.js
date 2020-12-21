@@ -59,7 +59,7 @@ export default function NavBar() {
    };
    const handleLogout = () => {
       setAnchorEl(null);
-      console.log('logout');
+      // console.log('logout');
       LocalStorageService.clearToken();
       setRole(LocalStorageService.getRole());
       history.push("/");
@@ -69,6 +69,10 @@ export default function NavBar() {
       setAnchorEl(null);
       history.push("/login");
    };
+
+   const gotoCart = () => {
+      history.push("/cart");
+   }
 
 
    const menus = [
@@ -104,7 +108,7 @@ console.log(`role:${role}`);
                   <HomeIcon />
                </IconButton>
 
-               <IconButton aria-label="show 4 new mails" color="inherit">
+               <IconButton aria-label="show 4 new mails" color="inherit" onClick={gotoCart}>
                   <Badge badgeContent={4} color="secondary">
                      <ShoppingCartIcon />
                   </Badge>

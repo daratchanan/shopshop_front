@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -20,18 +20,20 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Container from '@material-ui/core/Container';
 import { Button, Divider, Grid, TextField } from '@material-ui/core';
+import NavBar from '../../../components/Navbar/Navbar';
+import axios from 'axios';
 
 
-function createData(name, detail, price, qty) {
-   return { name, detail, price, qty };
-}
+// function createData(name, detail, price, qty) {
+//    return { name, detail, price, qty };
+// }
 
-const rows = [
-   createData(0, 'WALL AIR CONDITIONER MITSUBISHI MSY-JS13VF 12283BTU INVERTER',
-      24600, 3),
-   createData(1, 'TATAMI FAN HATARI HT-S16R2 16" WHITE', 1290, 2),
-   createData(2, 'TATAMI FAN HATARI HT-S16R2 16" WHITE', 1290, 2)
-];
+// const rows = [
+//    createData(0, 'WALL AIR CONDITIONER MITSUBISHI MSY-JS13VF 12283BTU INVERTER',
+//       24600, 3),
+//    createData(1, 'TATAMI FAN HATARI HT-S16R2 16" WHITE', 1290, 2),
+//    createData(2, 'TATAMI FAN HATARI HT-S16R2 16" WHITE', 1290, 2)
+// ];
 
 function descendingComparator(a, b, orderBy) {
    if (b[orderBy] < a[orderBy]) {
@@ -60,7 +62,7 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-   { id: 'img', numeric: false, disablePadding: false, label: '' },
+   { id: 'img', numeric: false, disablePadding: false, label: 'img' },
    { id: 'detail', numeric: false, disablePadding: false, label: '' },
    { id: 'p', numeric: true, disablePadding: false, label: '' },
    { id: 'qty', numeric: true, disablePadding: false, label: '' }
@@ -141,8 +143,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
    const classes = useToolbarStyles();
-   const { numSelected } = props;
-
+   const { numSelected, deleteItem } = props;
    return (
       <Toolbar
          className={clsx(classes.root, {
@@ -162,7 +163,7 @@ const EnhancedTableToolbar = (props) => {
          {numSelected > 0 ? (
             <Tooltip title="Delete">
                <IconButton aria-label="delete">
-                  <DeleteIcon />
+                  <DeleteIcon onClick={deleteItem}/>
                </IconButton>
             </Tooltip>
          ) : (
@@ -183,6 +184,7 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles((theme) => ({
    root: {
       width: '100%',
+      marginTop: "20px"
    },
    paper: {
       width: '100%',
@@ -206,12 +208,35 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Cart() {
    const classes = useStyles();
-   const [order, setOrder] = React.useState('asc');
-   const [orderBy, setOrderBy] = React.useState('calories');
-   const [selected, setSelected] = React.useState([]);
-   const [page, setPage] = React.useState(0);
-   const [dense, setDense] = React.useState(false);
-   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+   const [order, setOrder] = useState('asc');
+   const [orderBy, setOrderBy] = useState('calories');
+   const [selected, setSelected] = useState([]);
+   const [page, setPage] = useState(0);
+   const [dense, setDense] = useState(false);
+   const [rowsPerPage, setRowsPerPage] = useState(5);
+   const [cartItems, setCartItems] = useState([])
+
+   const shippingFee = 200;
+   const totalCartPrice = cartItems.reduce((accu, item) => {
+      return item.quantity * item.Product.price + accu;
+   }, 0)
+
+   
+
+   const fetchCart =()=>{
+      axios.get("/cartItems") 
+      .then(async (res) => {
+         setCartItems(res.data.cartItem)
+      })
+      .catch(err => {
+         console.log(err);
+         alert("Something went wrong.")
+      });
+   }
+
+   useEffect(() => {
+      fetchCart()
+   }, [])
 
    const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
@@ -221,7 +246,7 @@ export default function Cart() {
 
    const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-         const newSelecteds = rows.map((n) => n.name);
+         const newSelecteds = cartItems.map((n) => n.Product.name);
          setSelected(newSelecteds);
          return;
       }
@@ -256,18 +281,52 @@ export default function Cart() {
       setRowsPerPage(parseInt(event.target.value, 10));
       setPage(0);
    };
+   const updateQuantity = (e)=>{
+      // console.log (e.target.id)
+      // console.log(e.target.value)
+      axios.put(`/cartItems/${e.target.id}`,{
+       quantity: Number(e.target.value)
+      }) 
+         .then(async (res) => {
+            fetchCart()
+         })
+         .catch(err => {
+            console.log(err);
+            alert("Something went wrong.")
+         });
+      //fetch
+      fetchCart()
+   }
 
+   const deleteItem = async ()=>{
+      console.log('delete clicked')
+      console.log(selected);
+
+      await Promise.all(selected.map(async id => await axios.delete(`/cartItems/${id}`))) ;
+        fetchCart() 
+      //      .then(async (res) => {
+      //         fetchCart()
+      //      })
+      //      .catch(err => {
+      //         console.log(err);
+      //         alert("Something went wrong.")
+      //      });
+      //   //fetch
+      //   fetchCart()
+   }
 
    const isSelected = (name) => selected.indexOf(name) !== -1;
 
-   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+   const emptyRows = rowsPerPage - Math.min(rowsPerPage, cartItems.length - page * rowsPerPage);
 
    return (
+      <>
+      <NavBar />
       <Container maxWidth="xl" className={classes.root}>
          <Grid container spacing={3} >
             <Grid item md={9} >
                <Paper className={classes.paper} >
-                  <EnhancedTableToolbar numSelected={selected.length} />
+                  <EnhancedTableToolbar deleteItem={deleteItem} numSelected={selected.length} />
                   <TableContainer>
                      <Table
                         className={classes.table}
@@ -282,13 +341,13 @@ export default function Cart() {
                            orderBy={orderBy}
                            onSelectAllClick={handleSelectAllClick}
                            onRequestSort={handleRequestSort}
-                           rowCount={rows.length}
+                           rowCount={cartItems.length}
                         />
                         <TableBody>
-                           {stableSort(rows, getComparator(order, orderBy))
+                           {stableSort(cartItems, getComparator(order, orderBy))
                               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                               .map((row, index) => {
-                                 const isItemSelected = isSelected(row.name);
+                                 const isItemSelected = isSelected(row.id);
                                  const labelId = `enhanced-table-checkbox-${index}`;
 
                                  return (
@@ -298,36 +357,37 @@ export default function Cart() {
                                        role="checkbox"
                                        aria-checked={isItemSelected}
                                        tabIndex={-1}
-                                       key={row.name}
+                                       key={row.Product.name}
                                        selected={isItemSelected}
                                     >
                                        <TableCell padding="checkbox">
                                           <Checkbox
                                              checked={isItemSelected}
                                              inputProps={{ 'aria-labelledby': labelId }}
-                                             onClick={(event) => handleClick(event, row.name)}
+                                             onClick={(event) => handleClick(event, row.id)}
                                           />
                                        </TableCell>
                                        <TableCell >
                                           <img
-                                             src={"https://source.unsplash.com/random"}
+                                             src={row.Product.img}
                                              width={"100px"}
                                              height={"100px"}
                                           />
                                        </TableCell>
-                                       <TableCell align="left">{row.detail}</TableCell>
-                                       <TableCell align="left">{row.price}</TableCell>
+                                       <TableCell align="left">{row.Product.name}</TableCell>
+                                       <TableCell align="left">{row.Product.price}</TableCell>
 
                                        <TableCell align="left">
                                           <TextField
-                                             id="outlined-number"
-                                             // label="Number"
+                                             id={row.id}
+                                             //label="Number"
                                              type="number"
                                              InputLabelProps={{
                                                 shrink: true,
                                              }}
                                              variant="outlined"
-                                             defaultValue="1"
+                                             defaultValue={row.quantity}
+                                             onChange={updateQuantity}
                                           />
                                        </TableCell>
                                     </TableRow>
@@ -344,7 +404,7 @@ export default function Cart() {
                   <TablePagination
                      rowsPerPageOptions={[5, 10, 25]}
                      component="div"
-                     count={rows.length}
+                     count={cartItems.length}
                      rowsPerPage={rowsPerPage}
                      page={page}
                      onChangePage={handleChangePage}
@@ -365,7 +425,7 @@ export default function Cart() {
                      </Grid>
                      <Grid item md={3}>
                         <Typography variant="body1" gutterBottom>
-                           45000
+                           {totalCartPrice}
                         </Typography>
                      </Grid>
                   </Grid>
@@ -378,7 +438,7 @@ export default function Cart() {
                      <Grid item md={3}>
                      <Grid container justify="space-around" style={{paddingBottom:"20px"}}>
                         <Typography variant="body1" gutterBottom>
-                           200
+                           {shippingFee}
                         </Typography>
                      </Grid>
                      </Grid>
@@ -393,18 +453,18 @@ export default function Cart() {
                      </Grid>
                      <Grid item md={3}>
                         <Typography variant="h6" gutterBottom>
-                           45200
+                           {totalCartPrice+shippingFee}
                         </Typography>
                      </Grid>
                   </Grid>
                   <Button variant="contained" color="primary" fullWidth>
                      GO TO CHECKOUT
-                     </Button>
-
+                  </Button>
 
                </Paper>
             </Grid>
          </Grid>
       </Container>
+      </>
    );
 }
