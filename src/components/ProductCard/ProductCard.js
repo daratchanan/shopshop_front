@@ -39,10 +39,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
 export default function ProductCard({ price, description, productName, img, productId }) {
    const classes = useStyles();
-   const  { user }  = useContext(UserContext);
+   const { user } = useContext(UserContext);
 
    const addCart = async ()=>{
       const item = { quantity:1, product_id:productId, user_id:user.id }

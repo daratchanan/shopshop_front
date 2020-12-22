@@ -42,20 +42,20 @@ const useStyles = makeStyles((theme) => ({
 export default function NavBar() {
    const classes = useStyles();
    const history = useHistory();
-   const { role , setRole} = useContext(UserContext);
+   const { role, setRole } = useContext(UserContext);
 
    const [anchorEl, setAnchorEl] = useState(null);
    const open = Boolean(anchorEl);
-   
+
    const handleMenu = (event) => {
       setAnchorEl(event.currentTarget);
    };
    const handleClose = () => {
       setAnchorEl(null);
-    };
+   };
    const handleProfile = () => {
       setAnchorEl(null);
-     alert('profile click')
+      alert('profile click')
    };
    const handleLogout = () => {
       setAnchorEl(null);
@@ -72,6 +72,10 @@ export default function NavBar() {
 
    const gotoCart = () => {
       history.push("/cart");
+   };
+
+   const gotoHome = () => {
+      history.push("/");
    }
 
 
@@ -85,7 +89,9 @@ export default function NavBar() {
       { name: "Computers/Laptops" },
       { name: "Smartphones" },
    ]
-console.log(`role:${role}`);
+   console.log(`role:${role}`);
+
+
    return (
       <div className={classes.root} >
          <AppBar position="static">
@@ -105,12 +111,13 @@ console.log(`role:${role}`);
                <IconButton
                   color="inherit"
                >
-                  <HomeIcon />
+                  <HomeIcon onClick={gotoHome} />
                </IconButton>
 
-               <IconButton aria-label="show 4 new mails" color="inherit" onClick={gotoCart}>
-                  <Badge badgeContent={4} color="secondary">
-                     <ShoppingCartIcon />
+               <IconButton aria-label="show 4 new mails" color="inherit" >
+               <Badge  color="secondary">
+                  {/* <Badge badgeContent={4} color="secondary"> */}
+                     <ShoppingCartIcon onClick={gotoCart} />
                   </Badge>
                </IconButton>
                {/* <IconButton
@@ -147,12 +154,12 @@ console.log(`role:${role}`);
                   open={open}
                   onClose={handleClose}
                >
-                  <MenuItem onClick={handleProfile}>My profile</MenuItem>
-                {role === 'USER'?
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                :
-                <MenuItem onClick={handleLogin}>Login</MenuItem>
-                }
+                  {/* <MenuItem onClick={handleProfile}>My profile</MenuItem> */}
+                  {role === 'USER' ?
+                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                     :
+                     <MenuItem onClick={handleLogin}>Login</MenuItem>
+                  }
                </Menu>
             </Toolbar>
             <Toolbar className={classes.bottomMenu}>
