@@ -3,20 +3,21 @@ import LocalStorageService from "./services/localStorage"
 import { useState } from 'react';
 import PrivateRoutes from './containers/PrivateRoutes/PrivateRoutes';
 import UserContext from './context/UserContext';
-
+import DataContext from './context/DataContext';
 
 
 function App() {
    const [role, setRole] = useState(LocalStorageService.getRole());
-   const [userId, setUserId] = useState();
+   const [products, setProducts] = useState([]);
 
    const user = LocalStorageService.getUser();
-  
 
    return (
       <>
          <UserContext.Provider value={{ role, setRole, user }}>
-            <PrivateRoutes role={role} setRole={setRole} />
+            <DataContext.Provider value={{ products, setProducts}}>
+               <PrivateRoutes role={role} setRole={setRole} />
+            </DataContext.Provider>
          </UserContext.Provider>
       </>
    );

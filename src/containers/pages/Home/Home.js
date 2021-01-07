@@ -1,13 +1,15 @@
 import React from 'react';
-import ProductItem from '../../../components/ProductItem/ProductItem';
+import AllProduct from '../../../components/AllProduct/AllProduct';
 import Navbar from "../../../components/Navbar/Navbar";
+import TopProduct from '../../../components/TopProduct/TopProduct';
 
 
 function Home() {
    return (
       <div>
          <Navbar />
-         <ProductItem />
+         <TopProduct />
+         <AllProduct />
       </div>
    )
 };

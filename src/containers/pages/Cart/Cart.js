@@ -285,9 +285,7 @@ export default function Cart() {
 
   const handleOrder = (e) => {
 
-   
-
-    axios.post("/orders", {total_price: totalCartPrice + shippingFee})
+    axios.post("/orders", { total_price: totalCartPrice + shippingFee })
       .then(async (res) => {
         alert("Order created")
         history.push("/");
@@ -296,9 +294,8 @@ export default function Cart() {
         console.log(err);
         alert("Something went wrong.")
       });
-
   };
-  
+
 
   const updateQuantity = (e) => {
     // console.log (e.target.id)
@@ -468,8 +465,8 @@ export default function Cart() {
                 </Grid>
               </Grid>
               <Button variant="contained" color="primary" fullWidth onClick={handleOrder}>
-                ORDER 
-                  </Button>
+                ORDER
+              </Button>
 
             </Paper>
           </Grid>

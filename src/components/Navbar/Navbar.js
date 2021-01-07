@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -14,8 +14,10 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import HomeIcon from '@material-ui/icons/Home';
 import Badge from '@material-ui/core/Badge';
 import UserContext from '../../context/UserContext';
+import DataContext from '../../context/DataContext';
 import LocalStorageService from "../../services/localStorage"
 import { useHistory } from 'react-router-dom';
+import axios from "../../config/axios";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -42,7 +44,9 @@ const useStyles = makeStyles((theme) => ({
 export default function NavBar() {
    const classes = useStyles();
    const history = useHistory();
+   const [allProductType, setAllProductType] = useState([]);
    const { role, setRole } = useContext(UserContext);
+   const { setProducts } = useContext(DataContext);
 
    const [anchorEl, setAnchorEl] = useState(null);
    const open = Boolean(anchorEl);
@@ -70,6 +74,14 @@ export default function NavBar() {
       history.push("/login");
    };
 
+   const hadleMenubar = (id) => {
+      if(id === '0'){
+         fetchProducts();
+      } else {
+         fetchProductByType(id);
+      }
+   };
+
    const gotoCart = () => {
       history.push("/cart");
    };
@@ -78,18 +90,25 @@ export default function NavBar() {
       history.push("/");
    }
 
+   const fetchProducts = async () => {
+      const res = await axios.get("/products");
+      setProducts(res.data.products);
+   }
 
-   const menus = [
-      { name: "Televesions" },
-      { name: "Refrigerators" },
-      { name: "Air Conditioners" },
-      { name: "Fans" },
-      { name: "Washing Machines" },
-      { name: "Irons" },
-      { name: "Computers/Laptops" },
-      { name: "Smartphones" },
-   ]
-   console.log(`role:${role}`);
+   const fetchProductByType = async (id) => {
+      const res = await axios.get(`products/allProductType_id/${id}`);
+      setProducts(res.data.allProductType_id);
+   }
+
+   //get all type product to create menubars
+   const fetchAllProductType = async () => {
+      const res = await axios.get("/products/allProductType");
+      setAllProductType(res.data.productTypes);
+   }
+
+   useEffect(() => {
+      fetchAllProductType();
+   }, [])
 
 
    return (
@@ -115,20 +134,11 @@ export default function NavBar() {
                </IconButton>
 
                <IconButton aria-label="show 4 new mails" color="inherit" >
-               <Badge  color="secondary">
-                  {/* <Badge badgeContent={4} color="secondary"> */}
+                  <Badge color="secondary">
+                     {/* <Badge badgeContent={4} color="secondary"> */}
                      <ShoppingCartIcon onClick={gotoCart} />
                   </Badge>
                </IconButton>
-               {/* <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="inherit"
-               >
-                  <ShoppingCartIcon />
-               </IconButton> */}
 
                <IconButton
                   aria-label="account of current user"
@@ -164,8 +174,16 @@ export default function NavBar() {
             </Toolbar>
             <Toolbar className={classes.bottomMenu}>
                <ButtonGroup variant="text" color="primary" aria-label="text primary button group">
-                  {menus.map((menu) => (
-                     <Button>{menu.name}</Button>
+                  <Button key={0} onClick={() => hadleMenubar('0')}>
+                     All
+                  </Button>
+                  {allProductType.map((menu) => (
+                     <Button
+                        key={menu.id}
+                        onClick={() => hadleMenubar(menu.id)}
+                     >
+                        {menu.name}
+                     </Button>
                   ))}
                </ButtonGroup>
             </Toolbar>
