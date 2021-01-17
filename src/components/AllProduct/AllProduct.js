@@ -1,9 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { Box, Container, Grid, makeStyles, Typography } from '@material-ui/core';
 import axios from "../../config/axios";
 import DataContext from "../../context/DataContext";
-
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 const useStyles = makeStyles((theme) => ({
    cardGrid: {
       paddingTop: theme.spacing(4),
@@ -18,7 +19,10 @@ const useStyles = makeStyles((theme) => ({
 function AllProduct() {
    const classes = useStyles();
    // const [products, setProducts] = useState([]);
-   const { products, setProducts} = useContext(DataContext);
+   const { products, setProducts } = useContext(DataContext);
+   const [loading, setLoading] = useState(true);
+   // const [items, setItems] = useState([]);
+
 
    // const fetchProductByType = async (id) => {
    //    const res = await axios.get(`products/allProductType_id/${id}`);
@@ -28,12 +32,21 @@ function AllProduct() {
    const fetchProducts = async () => {
       const res = await axios.get("/products");
       setProducts(res.data.products);
+      // setItems(res.data.products);
    }
 
    useEffect(() => {
       fetchProducts();
+      setLoading(false);
    }, []);
 
+   if (loading) {
+      return (
+         <Backdrop className={classes.backdrop} open>
+            <CircularProgress color="inherit" />
+         </Backdrop>
+      );
+   }
 
    return (
       <Container className={classes.cardGrid} maxWidth="md">

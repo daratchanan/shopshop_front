@@ -96,7 +96,7 @@ export default function NavBar() {
    }
 
    const fetchProductByType = async (id) => {
-      const res = await axios.get(`products/allProductType_id/${id}`);
+      const res = await axios.get(`/products/allProductType_id/${id}`);
       setProducts(res.data.allProductType_id);
    }
 

@@ -23,7 +23,8 @@ import { Button, Divider, Grid, TextField } from '@material-ui/core';
 import NavBar from '../../../components/Navbar/Navbar';
 import axios from '../../../config/axios';
 import { useHistory } from 'react-router-dom';
-
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 // function createData(name, detail, price, qty) {
 //    return { name, detail, price, qty };
@@ -216,6 +217,7 @@ export default function Cart() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const history = useHistory();
 
   const shippingFee = 200;
@@ -231,14 +233,11 @@ export default function Cart() {
       })
       .catch(err => {
         console.log(err);
-        alert("Something went wrong.")
+        alert("Something went wrong.....")
       });
   }
 
-  useEffect(() => {
-    fetchCart()
-  }, [])
-
+  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -325,6 +324,20 @@ export default function Cart() {
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, cartItems.length - page * rowsPerPage);
+
+  useEffect(() => {
+    fetchCart()
+    setLoading(false)
+  }, [])
+
+  
+  if (loading) {
+    return (
+       <Backdrop className={classes.backdrop} open>
+          <CircularProgress color="inherit" />
+       </Backdrop>
+    );
+ }
 
   return (
     <>

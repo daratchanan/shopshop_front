@@ -29,7 +29,7 @@ axios.interceptors.response.use(
    },
    (err) => {
       if (err.response?.status === 401) {
-         LocalStorageService.removeToken();
+         LocalStorageService.clearToken();
 
          alert("Please login again")
          // notification.error({

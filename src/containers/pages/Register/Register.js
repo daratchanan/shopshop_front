@@ -176,7 +176,7 @@ function Register(props) {
                   className={classes.submit}
                >
                   Register
-          </Button>
+               </Button>
 
             </form>
          </div>

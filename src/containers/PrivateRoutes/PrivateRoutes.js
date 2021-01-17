@@ -11,7 +11,8 @@ function PrivateRoutes(props) {
    return (
       <>
          <Switch>
-            {RolesList[role].map(({ path, page: PageComponent }) => <Route exact path={path}>
+            {RolesList[role].map(({ path, page: PageComponent }) => 
+            <Route exact path={path}>
                <PageComponent setRole={props.setRole} />
             </Route>)}
             <Route path="*" component={NotFound} />

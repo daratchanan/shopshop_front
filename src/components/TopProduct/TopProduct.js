@@ -19,7 +19,7 @@ function TopProduct() {
    const [topProducts, setTopProducts] = useState([]);
 
    const fetchTopProducts = async () => {
-      const res = await axios.get("/products/top?limit=4");
+      const res = await axios.get("products/top?limit=4");
       setTopProducts(res.data.products);
       console.log(res.data.products)
    }
