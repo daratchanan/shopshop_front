@@ -50,14 +50,10 @@ const useStyles = makeStyles((theme) => ({
    },
 }));
 
-
 export default function Login() {
-   const { role , setRole} = useContext(UserContext)
+   const { setRole } = useContext(UserContext)
    const classes = useStyles();
-   // const { register, handleSubmit } = useForm();
-
-   // const { setChange } = useContext(UserContext)
-
+   
    const history = useHistory();
 
    const [email, setEmail] = useState("");
@@ -83,8 +79,6 @@ export default function Login() {
             alert("Login success.")
             LocalStorageService.setToken(res.data.token);
             setRole(LocalStorageService.getRole());
-            // setUser(jwtDecode(res.data.token));
-            // setChange(true);
             history.push('/');
          })
          .catch(err => {

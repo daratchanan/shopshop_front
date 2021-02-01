@@ -78,8 +78,6 @@ export default function InputProduct() {
       setProductType(event.target.value);
    };
 
-
-
    const handleClose = () => {
       setSelectedFiles({ open: false });
    }
@@ -109,8 +107,8 @@ export default function InputProduct() {
       formData.append('description', description);
       formData.append('productType_id', productType);
       formData.append('image', selectedFiles.files[0]);
-      
-      axios.post("/products", formData) 
+
+      axios.post("/products", formData)
          .then(async (res) => {
             alert("Inputproduct successfully.")
          })
@@ -124,7 +122,7 @@ export default function InputProduct() {
       const res = await axios.get("/products/allProductType");
       setAllProductType(res.data.productTypes);
    };
-   
+
    useEffect(() => {
       fetchProductTypes();
    }, []);
@@ -181,17 +179,19 @@ export default function InputProduct() {
                            onChange={productTypeHandle}
                            label="Product type"
                         >
-                          {allProductType.map((p, idx) =>( <MenuItem id={idx+1} value={idx+1}>{p.name}</MenuItem>)
-                          )}
+                           {allProductType.map((p, idx) => (<MenuItem id={idx + 1} value={idx + 1}>{p.name}</MenuItem>)
+                           )}
                         </Select>
                      </FormControl>
                   </Grid>
+
+                  <Grid item xs={12}>
+                     <Button variant="contained" color="primary" component="span" onClick={handleOpen}>
+                        Upload
+                     </Button>
+                  </Grid>
                </Grid>
-
-               <Button variant="contained" color="primary" component="span" onClick={handleOpen}>
-                  Upload
-               </Button>
-
+               
                <DropzoneDialog
                   open={selectedFiles.open}
                   onSave={handleSave}

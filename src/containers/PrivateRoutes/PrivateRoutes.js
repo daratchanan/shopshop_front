@@ -4,7 +4,6 @@ import { Switch, Route } from "react-router-dom";
 import NotFound from "../pages/NotFound/NotFound";
 
 
-
 function PrivateRoutes(props) {
      const role = props.role || "GUEST";
 
