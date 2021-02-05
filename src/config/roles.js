@@ -4,7 +4,7 @@ import InputProduct from "../containers/pages/InputProduct/InputProduct";
 import Login from "../containers/pages/Login/Login";
 import Register from "../containers/pages/Register/Register";
 
-const components ={
+const components = {
    home: {
       path: "/",
       page: Home

@@ -48,8 +48,6 @@ const useStyles = makeStyles((theme) => ({
    },
    input: {
       display: 'none',
-      // background:"none",
-      // border:"none"
    },
 }));
 
@@ -93,11 +91,6 @@ export default function InputProduct() {
       setSelectedFiles({ open: true });
    }
 
-   // const onUpload = e => {
-   //    console.log(e.target.files[0])
-   //    setImg(e.target.files[0].name);
-   // }
-
 
    const onFinish = async (event) => {
       event.preventDefault();
@@ -127,7 +120,6 @@ export default function InputProduct() {
       fetchProductTypes();
    }, []);
 
-   // console.log(allProductType);
 
    return (
       <Container component="main" maxWidth="xs">
@@ -186,12 +178,16 @@ export default function InputProduct() {
                   </Grid>
 
                   <Grid item xs={12}>
-                     <Button variant="contained" color="primary" component="span" onClick={handleOpen}>
+                     <Button
+                        variant="contained"
+                        color="primary"
+                        component="span"
+                        onClick={handleOpen}>
                         Upload
                      </Button>
                   </Grid>
                </Grid>
-               
+
                <DropzoneDialog
                   open={selectedFiles.open}
                   onSave={handleSave}
